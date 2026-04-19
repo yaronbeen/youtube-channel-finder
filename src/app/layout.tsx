@@ -13,12 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "YouTube Channel Finder | Bright Data Demo",
+  title: "YouTube Creator Email Finder | Bright Data Demo",
   description:
-    "Discover YouTube channels and extract contact emails using Bright Data's YouTube Datasets API. Search by keyword, find creators, and download results as CSV.",
+    "Find email addresses of YouTube creators by topic keyword using Bright Data's YouTube Datasets API. Discover creators, extract contact emails, download as CSV.",
   openGraph: {
-    title: "YouTube Channel Finder | Bright Data Demo",
-    description: "AI-powered YouTube channel discovery and email extraction.",
+    title: "YouTube Creator Email Finder | Bright Data Demo",
+    description: "Find contact emails of YouTube creators by topic keyword.",
     type: "website",
   },
 };

@@ -46,7 +46,7 @@ export function SearchForm({ onSearch, isSearching }: SearchFormProps) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Enter keywords (comma-separated)..."
+            placeholder="Topic keywords, e.g. ai coding assistant..."
             disabled={isSearching}
             className="w-full h-12 pl-12 pr-4 bg-zinc-900 border border-zinc-700 rounded-xl text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#FF6B35] focus:ring-1 focus:ring-[#FF6B35] disabled:opacity-50 transition-colors"
           />

@@ -29,7 +29,7 @@ export default function Home() {
             <Link href="/" className="flex items-center gap-3">
               <BrightDataLogo />
               <span className="text-zinc-600 text-lg font-light">/</span>
-              <span className="text-white font-medium text-sm">YouTube Channel Finder</span>
+              <span className="text-white font-medium text-sm">YouTube Creator Email Finder</span>
             </Link>
           </div>
           <div className="flex items-center gap-3">
@@ -61,11 +61,11 @@ export default function Home() {
         <section className="pt-16 pb-10 px-6">
           <div className="max-w-3xl mx-auto text-center space-y-4">
             <h1 className="text-4xl font-bold text-white tracking-tight">
-              YouTube Channel Finder
+              YouTube Creator Email Finder
             </h1>
             <p className="text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-              Search YouTube by keyword, discover creators, and extract their
-              contact emails. Powered by{" "}
+              Enter a topic keyword, find YouTube creators publishing about it,
+              and extract their contact emails for outreach. Powered by{" "}
               <a
                 href="https://brightdata.com"
                 target="_blank"
@@ -139,11 +139,11 @@ export default function Home() {
                   </svg>
                 </div>
                 <h3 className="text-lg font-medium text-zinc-300 mb-1">
-                  Ready to discover channels
+                  Ready to find creator emails
                 </h3>
                 <p className="text-sm text-zinc-500 max-w-md mx-auto">
-                  Enter keywords above to search YouTube for relevant channels
-                  and extract their contact information.
+                  Enter a topic keyword to search YouTube for relevant creators
+                  and extract their public contact emails.
                 </p>
               </div>
             )}

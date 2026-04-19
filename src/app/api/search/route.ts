@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
           // ── Step 1: Search videos ──
           send({
             type: "status",
-            message: `Searching YouTube for ${keywords.length} keyword(s)...`,
+            message: `Searching YouTube for creators matching ${keywords.length} keyword(s)...`,
             progress: 0.05,
           });
 
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
 
           send({
             type: "status",
-            message: `Discovered ${uniqueChannelUrls.length} unique channel(s)`,
+            message: `Found ${uniqueChannelUrls.length} unique creator(s)`,
             progress: 0.4,
           });
 
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
           // ── Step 3: Scrape channel details ──
           send({
             type: "status",
-            message: "Fetching channel details...",
+            message: "Fetching creator contact pages...",
             progress: 0.45,
           });
 
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
 
           send({
             type: "status",
-            message: "Processing channel data...",
+            message: "Extracting emails from creator pages...",
             progress: 0.8,
           });
 
@@ -244,7 +244,7 @@ export async function POST(request: NextRequest) {
 
           send({
             type: "status",
-            message: `Extracted ${emailCount} email(s) from ${channels.length} channel(s)`,
+            message: `Found ${emailCount} email(s) across ${channels.length} creator(s)`,
             progress: 0.95,
           });
 
@@ -252,7 +252,7 @@ export async function POST(request: NextRequest) {
 
           send({
             type: "status",
-            message: `Done! Found ${channels.length} channels with ${emailCount} emails`,
+            message: `Done! ${channels.length} creators · ${emailCount} emails found`,
             progress: 1.0,
           });
 

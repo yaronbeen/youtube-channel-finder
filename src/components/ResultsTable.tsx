@@ -74,7 +74,7 @@ export function ResultsTable({ channels }: ResultsTableProps) {
             <thead>
               <tr className="bg-zinc-900 border-b border-zinc-800">
                 <th className="text-left px-4 py-3 text-xs font-medium text-zinc-400 uppercase tracking-wider">
-                  Channel
+                  Creator
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-zinc-400 uppercase tracking-wider">
                   Subscribers

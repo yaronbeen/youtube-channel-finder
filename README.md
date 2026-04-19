@@ -1,6 +1,6 @@
-# YouTube Channel Finder
+# YouTube Creator Email Finder
 
-**Discover YouTube channels by keyword and extract their contact emails — powered by [Bright Data](https://brightdata.com).**
+**Find email addresses of YouTube creators by topic keyword — powered by [Bright Data](https://brightdata.com).**
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yaronbeen/youtube-channel-finder&env=BRIGHT_DATA_API_KEY&envDescription=Bright%20Data%20API%20key%20for%20YouTube%20Datasets&envLink=https://brightdata.com)
 
@@ -8,11 +8,11 @@
 
 ## What is this?
 
-YouTube Channel Finder is a web app that takes keyword search queries, discovers YouTube channels publishing relevant content, and extracts their contact email addresses — all using Bright Data's YouTube Datasets API.
+Enter any topic keyword (e.g. `ai coding assistant`) and this tool finds YouTube creators publishing content on that topic and extracts their public contact email addresses.
+
+It searches YouTube for relevant videos, identifies the creators behind them, scrapes their public channel pages, scans their video descriptions and external websites, and surfaces any emails found — all via Bright Data's YouTube Datasets API. Results stream live and can be downloaded as a CSV ready for outreach.
 
 You can tune search depth in the UI (`5`, `20`, `40`, `60` videos per keyword) to trade speed for coverage.
-
-The entire pipeline streams live to the browser via **Server-Sent Events (SSE)**: you see progress updates as videos are discovered, channels are deduplicated, and emails are extracted in real-time.
 
 **Built with [Bright Data](https://brightdata.com)**
 
@@ -28,38 +28,38 @@ User enters keywords (e.g. "ai coding assistant")
 │  Stage 1 · Video Discovery                          │
 │  Bright Data YouTube Videos Dataset                 │
 │  Searches YouTube for videos matching keywords      │
-│  Returns video metadata + channel info              │
+│  Returns video metadata, descriptions, creator info │
 └────────────────────────┬────────────────────────────┘
                          │
                          ▼
 ┌─────────────────────────────────────────────────────┐
-│  Stage 2 · Channel Deduplication                    │
-│  Extracts unique channel URLs from video results    │
-│  Tracks which keywords led to each channel          │
+│  Stage 2 · Creator Deduplication                    │
+│  Extracts unique creator channel URLs               │
+│  Scans video descriptions for emails already        │
 └────────────────────────┬────────────────────────────┘
                          │
                          ▼
 ┌─────────────────────────────────────────────────────┐
-│  Stage 3 · Channel Scraping                         │
+│  Stage 3 · Creator Page Scraping                    │
 │  Bright Data YouTube Channels Dataset               │
-│  Scrapes each channel's About page for details      │
-│  Extracts description, subscriber count, links      │
+│  Scrapes each creator's About page                  │
+│  Extracts bio, subscriber count, external links     │
 └────────────────────────┬────────────────────────────┘
                          │
                          ▼
 ┌─────────────────────────────────────────────────────┐
 │  Stage 4 · Email Extraction                         │
 │  Regex-based extraction from:                       │
-│   - channel About data                              │
-│   - channel links                                   │
+│   - creator About / bio                             │
+│   - creator external links                          │
 │   - video descriptions                              │
 └────────────────────────┬────────────────────────────┘
                          │
                          ▼
 ┌─────────────────────────────────────────────────────┐
-│  Stage 5 · Second-pass Link Scan                    │
-│  If no emails found, scan public external links     │
-│  (including /contact and /about pages) for emails.  │
+│  Stage 5 · Second-pass Website Scan                 │
+│  For creators with no email yet, follows their      │
+│  external links and scans /contact + /about pages   │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -80,8 +80,8 @@ User enters keywords (e.g. "ai coding assistant")
 
 | Dataset | Dataset ID | Purpose |
 |---------|-----------|---------|
-| YouTube Videos | `gd_lk56epmy2i5g7lzu0k` | Discovers videos by keyword search |
-| YouTube Channels | `gd_lk538t2k2p1k3oos71` | Scrapes channel About pages for details |
+| YouTube Videos | `gd_lk56epmy2i5g7lzu0k` | Discover videos by keyword, get creator info + descriptions |
+| YouTube Channels | `gd_lk538t2k2p1k3oos71` | Scrape creator About pages for bio, links, contact info |
 
 ---
 
@@ -111,7 +111,7 @@ Create a `.env.local` file:
 
 ```env
 BRIGHT_DATA_API_KEY=your_brightdata_api_key
-# Optional: increase polling timeout for slow jobs (milliseconds)
+# Optional: increase polling timeout for slow jobs (milliseconds, default 300000)
 # BD_POLL_TIMEOUT_MS=420000
 ```
 
@@ -121,7 +121,17 @@ BRIGHT_DATA_API_KEY=your_brightdata_api_key
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and search for any keyword.
+Open [http://localhost:3000](http://localhost:3000), enter a keyword, and hit **Search**.
+
+---
+
+## Usage Tips
+
+- **Start narrow** — one focused keyword like `"email marketing saas"` gives more relevant creators than broad terms
+- **Use Depth 20** for a good speed/coverage balance
+- **Comma-separate up to 10 keywords** to cover related topics in one run
+- **Email hit rate** depends on the niche — tech/business creators typically have ~5–15% email visibility
+- If you hit timeouts, reduce depth or add `BD_POLL_TIMEOUT_MS=420000` to `.env.local`
 
 ---
 
@@ -131,18 +141,19 @@ Open [http://localhost:3000](http://localhost:3000) and search for any keyword.
 src/
 ├── app/
 │   ├── api/search/route.ts          # SSE pipeline endpoint
-│   ├── page.tsx                     # Main UI page
+│   ├── page.tsx                     # Main UI
 │   └── layout.tsx                   # Root layout + metadata
 ├── components/
-│   ├── SearchForm.tsx               # Keyword input + example chips
+│   ├── SearchForm.tsx               # Keyword input + depth selector + example chips
 │   ├── ProgressBar.tsx              # Pipeline progress indicator
 │   ├── StatusLog.tsx                # Real-time activity log
-│   └── ResultsTable.tsx             # Channel results + CSV download
+│   └── ResultsTable.tsx             # Results table + CSV download
 ├── hooks/
 │   └── useChannelSearch.ts          # SSE consumer + state management
 └── lib/
     ├── bright-data.ts               # Datasets API wrapper (trigger/poll/download)
     ├── email-extractor.ts           # Regex email extraction
+    ├── website-email.ts             # Second-pass website email scan
     ├── rate-limit.ts                # Per-IP rate limiter
     └── types.ts                     # TypeScript interfaces
 ```
@@ -155,10 +166,10 @@ The backend streams progress to the frontend via **Server-Sent Events (SSE)**:
 
 | Event | Payload | Description |
 |-------|---------|-------------|
-| `status` | `{ message, progress }` | Pipeline progress update (0–1) |
-| `channels` | `{ count }` | Number of unique channels discovered |
-| `result` | `{ channels[] }` | Final channel results with emails |
-| `error` | `{ message }` | Error message |
+| `status` | `{ message, progress }` | Pipeline step update (0–1) |
+| `channels` | `{ count }` | Number of unique creators found |
+| `result` | `{ channels[] }` | Final results with emails |
+| `error` | `{ message }` | Error with guidance |
 | `done` | — | Pipeline complete |
 
 ---

@@ -58,23 +58,23 @@ export interface ChannelResult {
   [key: string]: unknown;
 }
 
-// ── Processed channel for frontend ──
+// ── Processed creator for frontend ──
 
 export interface Channel {
   channelUrl: string;
-  channelName: string;
+  channelName: string;   // creator display name
   subscribers: string;
   description: string;
   emails: string[];
   links: string;
-  keywords: string[];
+  keywords: string[];    // topic keywords that surfaced this creator
 }
 
 // ── SSE Event types ──
 
 export type SseEvent =
   | { type: "status"; message: string; progress: number }
-  | { type: "channels"; count: number }
+  | { type: "channels"; count: number }   // count of unique creators found
   | { type: "result"; channels: Channel[] }
   | { type: "error"; message: string }
   | { type: "done" };
